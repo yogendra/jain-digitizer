@@ -6,8 +6,8 @@ dependencies:
   - python=3.10
   - pip
   - pyside6
-  - pillow
   - rich
   - pip:
-      - pymupdf
       - google-genai
+      - streamlit
+      - streamlit-quill

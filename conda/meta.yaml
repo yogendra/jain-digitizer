@@ -23,10 +23,10 @@ requirements:
   run:
     - python >=3.10
     - pyside6
-    - pillow
     - rich
-    - pymupdf
     - google-genai
+    - streamlit
+    - streamlit-quill
 
 test:
   requires:

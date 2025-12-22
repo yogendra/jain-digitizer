@@ -5,12 +5,12 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QIcon
 
-from .rich_editor import MarkdownRichEditor
+from .rich_editor import HtmlRichEditor
 from .settings_dialog import SettingsDialog
 from .file_drop_zone import FileDropZone
-from .constants import DEFAULT_PROMPT
-from .translator import Translator
-from .logger_setup import logger
+from jain_digitizer.common.constants import DEFAULT_PROMPT
+from jain_digitizer.common.translator import Translator
+from jain_digitizer.common.logger_setup import logger
 from .overlay import LoadingOverlay
 
 class TranslationWorker(QThread):
@@ -94,8 +94,8 @@ class JainDigitizer(QMainWindow):
 
         # --- Workspace ---
         splitter = QSplitter(Qt.Horizontal)
-        self.hindi_editor = MarkdownRichEditor("HINDI OCR (SOURCE)...")
-        self.english_editor = MarkdownRichEditor("SCHOLARLY MANUSCRIPT (ENGLISH & IAST)...")
+        self.hindi_editor = HtmlRichEditor("HINDI OCR (SOURCE)...")
+        self.english_editor = HtmlRichEditor("SCHOLARLY MANUSCRIPT (ENGLISH & IAST)...")
 
         splitter.addWidget(self.hindi_editor)
         splitter.addWidget(self.english_editor)
@@ -200,16 +200,16 @@ class JainDigitizer(QMainWindow):
                         continue
                         
                     # Append Results
-                    header = f"\n--- FILE: {basename} ---\n"
+                    # The prompt now provides HTML headers like <h1>[X] File: Filename</h1>
+                    # We can just append the HTML directly.
                     
                     # Hindi OCR
-                    current_hindi = self.hindi_editor.toMarkdown()
-                    self.hindi_editor.setMarkdown(current_hindi + header + result.get("hindi_ocr", ""))
+                    self.hindi_editor.append(result.get("hindi_ocr", ""))
+                    self.hindi_editor.append("<hr/>") # Add a separator between files
                     
                     # English/IAST
-                    current_english_markdown = self.english_editor.toMarkdown()
-                    new_markdown = current_english_markdown + f"\n\n### File: {basename}\n\n" + result.get("english_translation", "")
-                    self.english_editor.setMarkdown(new_markdown)
+                    self.english_editor.append(result.get("english_translation", ""))
+                    self.english_editor.append("<hr/>") # Add a separator between files
         except Exception as e:
             logger.exception(f"Error display results: {str(e)}")
             QMessageBox.critical(self, "Display Error", f"Error displaying results: {str(e)}")

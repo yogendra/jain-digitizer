@@ -18,19 +18,10 @@ class Translator:
     def translate_files(self, file_paths):
         """
         Takes a list of file paths and sends them all to Gemini in a single request.
-        Returns a list of dictionaries, one for each file.
         """
-        if not self.api_key:
-            logger.error("Attempted to translate without API key")
-            raise ValueError("Gemini API Key is not set.")
-
         if isinstance(file_paths, str):
             file_paths = [file_paths]
 
-        logger.info(f"Starting translation for {len(file_paths)} files")
-        client = genai.Client(api_key=self.api_key)
-        
-        # Prepare parts
         parts = []
         for idx, path in enumerate(file_paths):
             logger.debug(f"Preparing file {idx+1}: {path}")
@@ -39,10 +30,31 @@ class Translator:
                 data = f.read()
             parts.append(types.Part.from_bytes(data=data, mime_type=mime_type))
             parts.append(types.Part.from_text(text=f"File {idx+1}: {os.path.basename(path)}"))
+        
+        return self._generate(parts, len(file_paths))
 
+    def translate_bytes(self, files_data):
+        """
+        Takes a list of (bytes, filename, mime_type) tuples.
+        """
+        parts = []
+        for idx, (data, filename, mime_type) in enumerate(files_data):
+            parts.append(types.Part.from_bytes(data=data, mime_type=mime_type))
+            parts.append(types.Part.from_text(text=f"File {idx+1}: {filename}"))
+        
+        return self._generate(parts, len(files_data))
+
+    def _generate(self, parts, num_files):
+        if not self.api_key:
+            logger.error("Attempted to translate without API key")
+            raise ValueError("Gemini API Key is not set.")
+
+        logger.info(f"Starting translation for {num_files} files")
+        client = genai.Client(api_key=self.api_key)
+        
         # Update prompt to handle multiple files if needed
         instruct = self.system_prompt
-        if len(file_paths) > 1:
+        if num_files > 1:
             instruct += "\n\nCRITICAL: You are processing multiple files. Return a JSON ARRAY of objects, one for each file in the same order."
         else:
             instruct += "\n\nReturn a single JSON object for the file."
@@ -58,6 +70,7 @@ class Translator:
             config=config,
             contents=parts
         )
+
         
         raw_response = response.text
         logger.debug(f"Received raw response from Gemini: {raw_response}")
@@ -66,7 +79,7 @@ class Translator:
             results = json.loads(raw_response)
             logger.info("Successfully received and parsed Gemini response")
             # Ensure it's a list if multiple files were sent
-            if len(file_paths) >= 1 and not isinstance(results, list):
+            if num_files >= 1 and not isinstance(results, list):
                 logger.warning("Expected list from API but got single object; wrapping in list")
                 return [results]
             return results if isinstance(results, list) else [results]

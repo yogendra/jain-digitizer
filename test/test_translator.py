@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from jain_digitizer.translator import Translator
+from jain_digitizer.common.translator import Translator
 
 def test_translator_initialization():
     translator = Translator(api_key="test_key", system_prompt="test_prompt")

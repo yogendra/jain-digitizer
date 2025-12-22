@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 vars:
   APP_NAME: jain-digitizer
@@ -14,8 +14,14 @@ tasks:
   run:
     desc: Run the application locally
     cmds:
-      - | 
-        export PYTHONPATH=$PYTHONPATH:$(pwd)/src && {{.PYTHON}} -m jain_digitizer.main
+      - |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src && {{.PYTHON}} -m jain_digitizer.desktop.main
+
+  web:
+    desc: Run the streamlit web interface
+    cmds:
+      - |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src && streamlit run src/jain_digitizer/web/app.py
 
   setup-dev:
     desc: Install development dependencies
@@ -30,7 +36,7 @@ tasks:
   build-exe:
     desc: Build the standalone executable locally
     cmds:
-      - pyinstaller --onefile --windowed --icon=src/jain_digitizer/icon.png --name {{.APP_NAME}} src/jain_digitizer/main.py
+      - pyinstaller --onefile --windowed --icon=src/jain_digitizer/desktop/icon.png --name {{.APP_NAME}} src/jain_digitizer/desktop/main.py
 
   commit:
     desc: Stage all changes and commit with a message

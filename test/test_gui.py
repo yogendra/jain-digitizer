@@ -3,7 +3,7 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox
 from unittest.mock import MagicMock, patch
-from jain_digitizer.app_window import JainDigitizer
+from jain_digitizer.desktop.app_window import JainDigitizer
 
 @pytest.fixture
 def app(qtbot):
@@ -35,13 +35,17 @@ def test_main_window_single_file_operation(app, qtbot):
     
     mock_results = [{"hindi_ocr": "नमस्तस्यै", "english_translation": "Salutations to her"}]
     
-    with patch("jain_digitizer.app_window.Translator.translate_files", return_value=mock_results):
+    with patch("jain_digitizer.desktop.app_window.Translator.translate_files", return_value=mock_results):
         qtbot.mouseClick(app.btn_process, Qt.LeftButton)
         
     # Check if results are displayed
+    # Note: toMarkdown() will convert HTML <h1> to # etc.
     assert "नमस्तस्यै" in app.hindi_editor.toMarkdown()
     assert "Salutations to her" in app.english_editor.toMarkdown()
-    assert "FILE: test_image.jpg" in app.hindi_editor.toMarkdown()
+    # The prompt results should contain the filename if mock data includes it, 
+    # but here we just check if the content is there.
+    # Since we removed the manual header, we might need to adjust this test 
+    # if we want to verify headers. For now, let's just check the content.
 
 def test_main_window_multiple_file_operation(app, qtbot):
     """
@@ -61,7 +65,7 @@ def test_main_window_multiple_file_operation(app, qtbot):
         {"hindi_ocr": "ocr2", "english_translation": "trans2"}
     ]
     
-    with patch("jain_digitizer.app_window.Translator.translate_files", return_value=mock_results):
+    with patch("jain_digitizer.desktop.app_window.Translator.translate_files", return_value=mock_results):
         qtbot.mouseClick(app.btn_process, Qt.LeftButton)
         
     # Check if both results are displayed
@@ -72,8 +76,6 @@ def test_main_window_multiple_file_operation(app, qtbot):
     assert "ocr2" in hindi_content
     assert "trans1" in english_content
     assert "trans2" in english_content
-    assert "FILE: file1.jpg" in hindi_content
-    assert "FILE: file2.jpg" in hindi_content
 
 def test_clear_button(app):
     """Test the clear button functionality."""

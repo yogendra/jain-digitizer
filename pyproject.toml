@@ -14,10 +14,10 @@ authors = [
 ]
 dependencies = [
     "PySide6",
-    "Pillow",
     "rich",
-    "pymupdf",
     "google-genai",
+    "streamlit",
+    "streamlit-quill",
 ]
 
 [project.optional-dependencies]
@@ -34,7 +34,7 @@ dev = [
 ]
 
 [project.scripts]
-jain-digitizer = "jain_digitizer.main:main"
+jain-digitizer = "jain_digitizer.desktop.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/jain_digitizer"]

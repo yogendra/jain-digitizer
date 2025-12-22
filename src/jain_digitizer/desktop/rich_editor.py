@@ -1,18 +1,40 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QToolBar)
 from PySide6.QtGui import (QFont, QTextCursor, QAction, QTextCharFormat)
 from PySide6.QtCore import Qt, QMimeData, QEvent
-from .logger_setup import logger
+from jain_digitizer.common.logger_setup import logger
 
-class MarkdownTextEdit(QTextEdit):
+class HtmlTextEdit(QTextEdit):
     """
-    A QTextEdit that automatically treats pasted text as Markdown.
+    A QTextEdit that handles HTML content.
     """
     def insertFromMimeData(self, source: QMimeData):
-        if source.hasText():
-            # Treat pasted text as markdown fragments
-            self.textCursor().insertMarkdown(source.text())
+        if source.hasHtml():
+            self.textCursor().insertHtml(source.html())
+        elif source.hasText():
+            self.textCursor().insertText(source.text())
         else:
             super().insertFromMimeData(source)
+
+    def createMimeDataFromSelection(self):
+        """
+        Custom mime data creation to ensure rich text/HTML is 
+        correctly placed on the clipboard for apps like Word.
+        """
+        cursor = self.textCursor()
+        if not cursor.hasSelection():
+            return None
+        
+        fragment = cursor.selection()
+        mime = QMimeData()
+        
+        # Plain text
+        mime.setText(cursor.selectedText().replace('\u2029', '\n'))
+        
+        # HTML content
+        # fragment.toHtml() provides a full HTML document including CSS for formatting
+        mime.setHtml(fragment.toHtml())
+        
+        return mime
 
     def wheelEvent(self, event):
         """Handle Ctrl+Scroll for zooming."""
@@ -24,6 +46,16 @@ class MarkdownTextEdit(QTextEdit):
             event.accept()
         else:
             super().wheelEvent(event)
+
+    def contextMenuEvent(self, event):
+        """Custom context menu for easier copying."""
+        menu = self.createStandardContextMenu()
+        
+        # We can add custom actions here if needed
+        # But for now, the standard menu should be fine 
+        # as it uses createMimeDataFromSelection internally
+        
+        menu.exec(event.globalPos())
 
     def event(self, event):
         """Handle Mac trackpad pinch gesture."""
@@ -39,10 +71,10 @@ class MarkdownTextEdit(QTextEdit):
                 return True
         return super().event(event)
 
-class MarkdownRichEditor(QWidget):
+class HtmlRichEditor(QWidget):
     """
     A Rich Text Editor that allows WYSIWYG-style editing 
-    but can import and export Markdown.
+    using HTML for internal and external representation.
     """
     def __init__(self, placeholder="", parent=None):
         super().__init__(parent)
@@ -70,7 +102,7 @@ class MarkdownRichEditor(QWidget):
         """)
 
         # Editor
-        self.editor = MarkdownTextEdit()
+        self.editor = HtmlTextEdit()
         self.editor.setPlaceholderText(placeholder)
         self.editor.setFont(QFont("Arial", 14))
         self.editor.setAcceptRichText(True)
@@ -96,9 +128,47 @@ class MarkdownRichEditor(QWidget):
         # Font size controls
         self.add_action("A+", "Increase Font Size", self.zoomIn)
         self.add_action("A-", "Decrease Font Size", self.zoomOut)
+        self.toolbar.addSeparator()
+        self.add_action("📋", "Copy All", self.copy_all)
+        self.add_action("⌫", "Normal Text (Clear Formatting)", self.clear_formatting)
         
         self.layout.addWidget(self.toolbar)
         self.layout.addWidget(self.editor)
+
+    def copy_all(self):
+        """Copies the entire content as HTML to the clipboard."""
+        from PySide6.QtGui import QGuiApplication
+        from PySide6.QtCore import QMimeData
+        
+        mime = QMimeData()
+        # Set both HTML and Plain Text
+        mime.setHtml(self.editor.toHtml())
+        mime.setText(self.editor.toPlainText().replace('\u2029', '\n'))
+        
+        QGuiApplication.clipboard().setMimeData(mime)
+        logger.info("Copied all content to clipboard as rich text")
+
+    def clear_formatting(self):
+        cursor = self.editor.textCursor()
+        if not cursor.hasSelection():
+            # If no selection, just clear the current character format
+            self.editor.setCurrentCharFormat(QTextCharFormat())
+            # Also reset font to default
+            self.editor.setFont(QFont("Arial", 14))
+            return
+
+        # If there is a selection, clear formatting of the selected text
+        cursor.beginEditBlock()
+        
+        # 1. Reset character format (bold, italic, color, etc.)
+        cursor.setCharFormat(QTextCharFormat())
+        
+        # 2. Reset block format (alignment, margins, etc.)
+        from PySide6.QtGui import QTextBlockFormat
+        cursor.setBlockFormat(QTextBlockFormat())
+        
+        cursor.endEditBlock()
+        self.editor.setTextCursor(cursor)
 
     def add_action(self, text, tooltip, callback):
         action = QAction(text, self)
@@ -163,12 +233,16 @@ class MarkdownRichEditor(QWidget):
     def zoomOut(self):
         self.editor.zoomOut()
 
+    def setHtml(self, text):
+        self.editor.setHtml(text)
+
+    def toHtml(self):
+        return self.editor.toHtml()
+
     def setMarkdown(self, text):
-        # PySide6's setMarkdown converts MD to Rich Text internally
         self.editor.setMarkdown(text)
 
     def toMarkdown(self):
-        # PySide6's toMarkdown converts Rich Text back to MD
         return self.editor.toMarkdown()
 
     def setPlainText(self, text):
@@ -181,14 +255,13 @@ class MarkdownRichEditor(QWidget):
         self.editor.clear()
 
     def append(self, text):
-        # For appending results, we often want them as markdown fragments
-        # We can temporarily move cursor to end and use insertHtml/Markdown
         cursor = self.editor.textCursor()
         cursor.movePosition(QTextCursor.End)
         self.editor.setTextCursor(cursor)
         
-        # If it looks like a header or MD, use insertMarkdown
-        if text.strip().startswith("#") or "---" in text:
-            self.editor.textCursor().insertMarkdown(text)
+        # Check if it looks like HTML
+        if text.strip().startswith("<") or "</" in text:
+            self.editor.insertHtml(text)
         else:
             self.editor.append(text)
+
