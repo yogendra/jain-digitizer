@@ -7,11 +7,25 @@ Jain Digitizer is a powerful, modern desktop application designed to streamline 
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
+
 - **Conda** (Miniconda or Anaconda)
 - **Gemini API Key**: Obtain one from the [Google AI Studio](https://aistudio.google.com/).
 
-### 2. Installation
+### 2. Linux System Dependencies (Debian/Ubuntu)
+
+If you are on Linux (including Raspberry Pi / aarch64), you need to install the following system libraries for the GUI and Camera to function:
+
+```bash
+sudo apt update
+sudo apt install -y libxcb-cursor0 libxcb-xinerama0 libxcb-icccm4 libxcb-image0 \
+    libxcb-keysyms1 libxcb-render-util0 libxcb-shape0 libxcb-xkb1 libxkbcommon-x11-0 \
+    libegl1 libopengl0 gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav
+```
+
+### 3. Installation
+
 Clone the repository and set up the environment:
+
 ```bash
 # Option 1: Using Pip (Recommended for users)
 pip install jain-digitizer
@@ -25,32 +39,54 @@ conda activate jain-digitizer
 pip install -e .
 ```
 
-### 3. Configuration
+### 4. Configuration
+
 1. Launch the application (see below).
 2. Click the **⚙️ Settings** button.
 3. Enter your **Gemini API Key**.
 4. (Optional) Customize the **System Prompt** for specific translation or formatting rules.
 
-### 4. Running the App
+### 5. Running the App
+
 If installed via pip/conda:
+
 ```bash
 jain-digitizer
 ```
 
 For developer local run:
+
 ```bash
 task run
 ```
 
 ---
 
+## 💻 Supported Platforms
+
+The application is designed to be cross-platform and supports the following architectures:
+
+| Operating System | Architecture             | Status                                                 |
+| :--------------- | :----------------------- | :----------------------------------------------------- |
+| **macOS**        | Apple Silicon (M1/M2/M3) | ✅ Fully Supported                                     |
+| **macOS**        | Intel (x86_64)           | ✅ Fully Supported                                     |
+| **Windows**      | x86_64                   | ✅ Fully Supported                                     |
+| **Windows**      | ARM64 (aarch64)          | ⚠️ Experimental (Requires compatible Python/Qt builds) |
+| **Linux**        | x86_64                   | ✅ Fully Supported (Ubuntu, Fedora, Arch, etc.)        |
+| **Linux**        | ARM64 (aarch64)          | ⚠️ Experimental (Raspberry Pi 4/5, Jetson, etc.)       |
+
+---
+
+---
+
 ## ✨ Features
+
 - **Intelligent OCR**: High-accuracy text extraction from PDFs and images using Gemini 2.0.
 - **Batch Processing**: Drop multiple files at once for lightning-fast concurrent processing.
-- **Rich Text Editor**: 
-    - WYSIWYG editing for Hindi and English.
-    - Paste-as-Markdown support.
-    - Native Trackpad **Pinch-to-Zoom** and `Ctrl+Scroll` support.
+- **Rich Text Editor**:
+  - WYSIWYG editing for Hindi and English.
+  - Paste-as-Markdown support.
+  - Native Trackpad **Pinch-to-Zoom** and `Ctrl+Scroll` support.
 - **Centralized Logging**: Beautiful, colorized terminal output and persistent file logs for easy debugging.
 - **Easy Distribution**: Packaged for Pip and Conda for seamless cross-platform usage.
 

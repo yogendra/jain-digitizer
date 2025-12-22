@@ -67,3 +67,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 .history
 logs/
+captures/

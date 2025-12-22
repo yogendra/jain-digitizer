@@ -5,9 +5,9 @@ channels:
 dependencies:
   - python=3.10
   - pip
-  - pyside6
   - rich
   - pip:
       - google-genai
       - streamlit
       - streamlit-quill
+      - pyside6

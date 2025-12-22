@@ -68,7 +68,7 @@ blocks (like ```json).
 
 ## 🏁 FINAL CHECK
 
-- The very first line of both fields must be the <h1>[X] File: filename</h1>` header.
+- The very first line of both fields must be the `<h1>[X] File: filename</h1>` header.
 - Use `<h2>` for major section headers if multiple sections exist.
 - Ensure all Devanagari is character-accurate.
 - Ensure IAST is philologically correct.

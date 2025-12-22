@@ -6,17 +6,15 @@ Book Digitizer is a desktop application that allows users to digitize books by c
 
 - Main Window
 
-    ![Main Window](main-window.png)
+  ![Main Window](main-window.png)
 
 - Settings Dialog
 
-    
-    ![Settings Dialog](settings-dialog.png)
+  ![Settings Dialog](settings-dialog.png)
 
 - Output
 
-    ![Output](processed-output.png)
-
+  ![Output](processed-output.png)
 
 ## Features
 
@@ -28,9 +26,40 @@ Book Digitizer is a desktop application that allows users to digitize books by c
 - Automatic file saving and backup
 - Cross-platform compatibility
 
-## Installation
-<WIP>
+## Camera Usage & Troubleshooting
 
+The application includes a camera capture feature for digitizing pages directly from your webcam or document camera.
+
+### Platform-Specific Setup
+
+#### macOS
+
+- **Permissions**: The first time you open the camera, macOS will prompt for permission.
+- **Manual Fix**: If you accidentally denied access, go to **System Settings > Privacy & Security > Camera** and ensure the application (or your terminal/IDE) is enabled.
+
+#### Windows
+
+- **Privacy Settings**: Go to **Settings > Privacy & security > Camera**.
+- **Toggle On**: Ensure "Camera access" is set to ON and "Let desktop apps access your camera" is also ON.
+
+#### Linux
+
+- **User Groups**: Your user must have permission to access `/dev/video*` devices. Usually, this means being part of the `video` group.
+- **Fix**: Run `sudo usermod -aG video $USER`, then log out and back in.
+
+### Troubleshooting Utility
+
+A dedicated script is included to help diagnose camera issues. To run it:
+
+```bash
+python utils/check_camera.py
+```
+
+This utility will detect your operating system and provide specific advice if the camera is not being detected.
+
+## Installation
+
+<WIP>
 
 ## License
 

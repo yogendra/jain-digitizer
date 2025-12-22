@@ -12,6 +12,13 @@ from jain_digitizer.common.constants import DEFAULT_PROMPT
 from jain_digitizer.common.translator import Translator
 from jain_digitizer.common.logger_setup import logger
 from .overlay import LoadingOverlay
+try:
+    from .camera_dialog import CameraDialog
+    MULTIMEDIA_AVAILABLE = True
+except ImportError as e:
+    logger.error(f"QtMultimedia not available: {e}")
+    MULTIMEDIA_AVAILABLE = False
+from PySide6.QtWidgets import QLabel
 
 class TranslationWorker(QThread):
     finished = Signal(list)
@@ -61,6 +68,33 @@ class JainDigitizer(QMainWindow):
         top_layout = QHBoxLayout(top_pane)
         top_layout.setContentsMargins(10, 10, 10, 10)
         top_layout.setSpacing(10)
+        
+        # Camera Button
+        self.btn_camera = QPushButton("📷")
+        self.btn_camera.setFixedSize(100, 100)
+        self.btn_camera.setToolTip("Capture from Camera")
+        self.btn_camera.setStyleSheet("""
+            QPushButton {
+                font-size: 40px;
+                border: 2px dashed #bbb;
+                border-radius: 10px;
+                background-color: #fcfcfc;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;
+                border-color: #3498db;
+            }
+        """)
+        self.btn_camera.clicked.connect(self.open_camera)
+        self.btn_camera.setEnabled(MULTIMEDIA_AVAILABLE)
+        if not MULTIMEDIA_AVAILABLE:
+            self.btn_camera.setToolTip("Camera support unavailable (missing libraries)")
+        top_layout.addWidget(self.btn_camera)
+
+        # OR Label
+        or_label = QLabel("OR")
+        or_label.setStyleSheet("font-weight: bold; color: #888; margin: 0 10px;")
+        top_layout.addWidget(or_label)
         
         self.drop_zone = FileDropZone("Drag & Drop PDF or Images Here\n(Click to browse)")
         top_layout.addWidget(self.drop_zone, 1) # Give dropzone stretch
@@ -227,6 +261,11 @@ class JainDigitizer(QMainWindow):
         self.btn_clear.setEnabled(True)
         self.progress_bar.setVisible(False)
         self.loading_overlay.hide()
+
+    def open_camera(self):
+        diag = CameraDialog(self)
+        diag.image_captured.connect(self.add_files)
+        diag.exec()
 
     def open_file_dialog(self):
         from PySide6.QtWidgets import QFileDialog
