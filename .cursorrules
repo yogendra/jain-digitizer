@@ -1,0 +1,34 @@
+# Jain Digitizer AI Coding Rules
+
+You are an expert software engineer specializing in Python, PySide6 (Qt), and AI integration (Gemini 2.0). Follow these rules strictly when contributing to the Jain Digitizer project.
+
+## 1. General Principles
+- **Cross-Platform First**: Always consider macOS (Apple Silicon/Intel), Windows (x86_64/ARM64), and Linux (x86_64/aarch64).
+- **Graceful Failures**: GUI should never crash. Use `try-except` blocks around external hardware (camera), file I/O, and API calls. Show user-friendly error messages via `self.status_label` or `QMessageBox`.
+- **Performance**: Use multi-threading (QThread/Worker patterns) for long-running tasks like OCR, translation, or batch processing to keep the UI responsive.
+
+## 2. Python Standards
+- **Python Version**: Target 3.10+.
+- **Type Hints**: Use type hints for all function signatures.
+- **Logging**: Use the centralized logger from `jain_digitizer.common.logger_setup`. Never use `print()` in production code.
+- **Path Handling**: Always use `os.path` or `pathlib` to ensure paths work across Windows/Mac/Linux. Use absolute paths for resource loading.
+
+## 3. GUI & Styling (PySide6)
+- **Aesthetics**: Aim for a "Premium & Modern" look. Use smooth transitions and hover effects.
+- **Rich Text**: Preserve Markdown formatting during translation/review flows.
+- **Signals**: Use Qt Signals/Slots for communication between components.
+- **Resource Management**: Properly stop cameras (`camera.stop()`) and release hardware in `closeEvent`.
+
+## 4. AI & OCR Implementation
+- **API**: Use `google-genai` (Gemini 2.0 Flash is preferred).
+- **Prompting**: System prompts should be configurable via the settings dialog.
+- **Hindi/Sanskrit Handling**: OCR must preserve Devanagari script accurately. Translations must preserve Sanskrit/Prakrit terms in ITAS equivalent when applicable.
+
+## 5. Deployment & Tools
+- **Taskfile**: Use `task run` for local testing and `task test` for validations.
+- **Versioning**: Always update `pyproject.toml` and `src/jain_digitizer/__init__.py` together when bumping versions.
+- **Dependencies**: New dependencies must be added to `pyproject.toml` and `environment.yml`.
+
+## 6. Documentation
+- Keep `README.md` and `docs/guide/README.md` updated with architecture changes or new dependencies.
+- Use Github-style markdown for all documentation.
