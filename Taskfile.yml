@@ -1,0 +1,50 @@
+version: '3'
+
+vars:
+  APP_NAME: jain-digitizer
+  PYTHON: python
+  CONDA_ENV: jain-digitizer
+
+tasks:
+  setup:
+    desc: Create the conda environment
+    cmds:
+      - conda env create -f environment.yml
+
+  run:
+    desc: Run the application locally
+    cmds:
+      - | 
+        {{.PYTHON}} src/main.py
+
+  test:
+    desc: Run tests
+    cmds:
+      - echo "No tests configured yet."
+
+  build:
+    desc: Build the standalone executable locally
+    cmds:
+      - pyinstaller --onefile --windowed --icon=src/icon.png --name {{.APP_NAME}} src/main.py
+
+  commit:
+    desc: Stage all changes and commit with a message
+    cmds:
+      - git add .
+      - git commit -m "{{.MSG}}"
+    requires:
+      vars: [MSG]
+
+  release:
+    desc: Create and push a new version tag
+    cmds:
+      - git tag v{{.VER}}
+      - git push origin v{{.VER}}
+      - echo "Tag v{{.VER}} pushed. GitHub Actions will now start the build."
+    requires:
+      vars: [VER]
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf build/ dist/ *.spec

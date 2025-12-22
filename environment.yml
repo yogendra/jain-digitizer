@@ -1,0 +1,13 @@
+name: jain-digitizer
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pyside6
+  - pillow
+  - pip:
+      - pymupdf  # For PDF to Image conversion
+      - google.genai
+      - pyinstaller

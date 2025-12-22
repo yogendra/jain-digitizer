@@ -1,0 +1,48 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            arch: amd64
+            executable: jain-digitizer.exe
+          - os: ubuntu-latest
+            arch: amd64
+            executable: jain-digitizer
+          # GitHub Actions recently added windows-arm64 runners for some accounts
+          # If unavailable, you can build on windows-latest using cross-compile flags
+          - os: windows-latest
+            arch: arm64
+            executable: jain-digitizer-arm64.exe
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: jain-digitizer
+          environment-file: environment.yml
+          auto-activate-base: false
+
+      - name: Build with PyInstaller
+        shell: bash -l {0}
+        run: |
+          pyinstaller --onefile --windowed --name ${{ matrix.executable }} src/main.py
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/${{ matrix.executable }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
