@@ -7,7 +7,7 @@ dependencies:
   - pip
   - pyside6
   - pillow
+  - rich
   - pip:
-      - pymupdf  # For PDF to Image conversion
-      - google.genai
-      - pyinstaller
+      - pymupdf
+      - google-genai

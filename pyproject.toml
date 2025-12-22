@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jain-digitizer"
+version = "0.1.0"
+description = "High-fidelity OCR and translation tool for Jain and Hindi literature using Gemini 2.0"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Jain Digitizer Contributors"},
+]
+dependencies = [
+    "PySide6",
+    "Pillow",
+    "rich",
+    "pymupdf",
+    "google-genai",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-qt",
+]
+dev = [
+    "pyinstaller",
+    "build",
+    "twine",
+    "pytest",
+    "pytest-qt",
+]
+
+[project.scripts]
+jain-digitizer = "jain_digitizer.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jain_digitizer"]
+rewrite-path = "src/"

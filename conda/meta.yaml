@@ -1,0 +1,48 @@
+{% set name = "jain-digitizer" %}
+{% set version = "0.1.0" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+  noarch: python
+  script: {{ PYTHON }} -m pip install . -vv
+  entry_points:
+    - jain-digitizer = jain_digitizer.main:main
+
+requirements:
+  host:
+    - python >=3.10
+    - pip
+    - hatchling
+  run:
+    - python >=3.10
+    - pyside6
+    - pillow
+    - rich
+    - pymupdf
+    - google-genai
+
+test:
+  requires:
+    - pytest
+    - pytest-qt
+  imports:
+    - jain_digitizer
+  commands:
+    - jain-digitizer --help
+    - pytest test/
+
+about:
+  home: https://github.com/yogendra/jain-digitizer
+  license: MIT
+  summary: 'High-fidelity OCR and translation tool for Jain and Hindi literature using Gemini 2.0'
+  description: |
+    Jain Digitizer is a powerful, modern desktop application designed to streamline the 
+    digitization of philological and religious texts, specifically tailored for Hindi 
+    and Jain literature.

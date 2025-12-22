@@ -15,17 +15,22 @@ tasks:
     desc: Run the application locally
     cmds:
       - | 
-        {{.PYTHON}} src/main.py
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src && {{.PYTHON}} -m jain_digitizer.main
+
+  setup-dev:
+    desc: Install development dependencies
+    cmds:
+      - pip install -e ".[dev]"
 
   test:
     desc: Run tests
     cmds:
-      - echo "No tests configured yet."
+      - export PYTHONPATH=$PYTHONPATH:$(pwd)/src && pytest test/
 
-  build:
+  build-exe:
     desc: Build the standalone executable locally
     cmds:
-      - pyinstaller --onefile --windowed --icon=src/icon.png --name {{.APP_NAME}} src/main.py
+      - pyinstaller --onefile --windowed --icon=src/jain_digitizer/icon.png --name {{.APP_NAME}} src/jain_digitizer/main.py
 
   commit:
     desc: Stage all changes and commit with a message
@@ -34,6 +39,18 @@ tasks:
       - git commit -m "{{.MSG}}"
     requires:
       vars: [MSG]
+
+  publish-pip:
+    desc: Build and upload to PyPI
+    cmds:
+      - python -m build
+      - twine upload dist/*
+
+  publish-conda:
+    desc: Build and upload to Anaconda
+    cmds:
+      - conda build conda/
+      - anaconda upload $(conda build conda/ --output)
 
   release:
     desc: Create and push a new version tag

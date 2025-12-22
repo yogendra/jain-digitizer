@@ -1,6 +1,43 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QToolBar)
 from PySide6.QtGui import (QFont, QTextCursor, QAction, QTextCharFormat)
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QMimeData, QEvent
+from .logger_setup import logger
+
+class MarkdownTextEdit(QTextEdit):
+    """
+    A QTextEdit that automatically treats pasted text as Markdown.
+    """
+    def insertFromMimeData(self, source: QMimeData):
+        if source.hasText():
+            # Treat pasted text as markdown fragments
+            self.textCursor().insertMarkdown(source.text())
+        else:
+            super().insertFromMimeData(source)
+
+    def wheelEvent(self, event):
+        """Handle Ctrl+Scroll for zooming."""
+        if event.modifiers() == Qt.ControlModifier:
+            if event.angleDelta().y() > 0:
+                self.zoomIn()
+            else:
+                self.zoomOut()
+            event.accept()
+        else:
+            super().wheelEvent(event)
+
+    def event(self, event):
+        """Handle Mac trackpad pinch gesture."""
+        if event.type() == QEvent.NativeGesture:
+            if event.gestureType() == Qt.NativeGestureType.ZoomNativeGesture:
+                # On macOS, scale is positive for pinch out (spread), negative for pinch in (contract)
+                scale = event.value()
+                
+                if scale > 0.01:      # Pinch Out / Spread
+                    self.zoomIn()
+                elif scale < -0.01:   # Pinch In / Contract
+                    self.zoomOut()
+                return True
+        return super().event(event)
 
 class MarkdownRichEditor(QWidget):
     """
@@ -32,6 +69,15 @@ class MarkdownRichEditor(QWidget):
             }
         """)
 
+        # Editor
+        self.editor = MarkdownTextEdit()
+        self.editor.setPlaceholderText(placeholder)
+        self.editor.setFont(QFont("Arial", 14))
+        self.editor.setAcceptRichText(True)
+        # Set a reasonable tab stop for indentation
+        self.editor.setTabStopDistance(20)
+
+        # Toolbar actions
         self.add_action("𝗕", "Bold", self.toggle_bold)
         self.add_action("𝑰", "Italic", self.toggle_italic)
         self.add_action("𝗨", "Underline", self.toggle_underline)
@@ -45,14 +91,11 @@ class MarkdownRichEditor(QWidget):
         self.toolbar.addSeparator()
         self.add_action("⮕", "Indent", self.indent)
         self.add_action("⬅", "Outdent", self.outdent)
+        self.toolbar.addSeparator()
 
-        # Editor
-        self.editor = QTextEdit()
-        self.editor.setPlaceholderText(placeholder)
-        self.editor.setFont(QFont("Arial", 12))
-        self.editor.setAcceptRichText(True)
-        # Set a reasonable tab stop for indentation
-        self.editor.setTabStopDistance(20)
+        # Font size controls
+        self.add_action("A+", "Increase Font Size", self.zoomIn)
+        self.add_action("A-", "Decrease Font Size", self.zoomOut)
         
         self.layout.addWidget(self.toolbar)
         self.layout.addWidget(self.editor)
@@ -114,6 +157,12 @@ class MarkdownRichEditor(QWidget):
             block_format.setIndent(block_format.indent() - 1)
             cursor.setBlockFormat(block_format)
 
+    def zoomIn(self):
+        self.editor.zoomIn()
+
+    def zoomOut(self):
+        self.editor.zoomOut()
+
     def setMarkdown(self, text):
         # PySide6's setMarkdown converts MD to Rich Text internally
         self.editor.setMarkdown(text)
@@ -140,6 +189,6 @@ class MarkdownRichEditor(QWidget):
         
         # If it looks like a header or MD, use insertMarkdown
         if text.strip().startswith("#") or "---" in text:
-            self.editor.insertMarkdown(text)
+            self.editor.textCursor().insertMarkdown(text)
         else:
             self.editor.append(text)
