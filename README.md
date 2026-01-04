@@ -1,6 +1,18 @@
 # Jain Digitizer 📚✨
 
+[![Build and Release](https://github.com/yogendra/jain-digitizer/actions/workflows/release.yaml/badge.svg)](https://github.com/yogendra/jain-digitizer/actions/workflows/release.yaml)
+[![PyPI version](https://img.shields.io/pypi/v/jain-digitizer.svg)](https://pypi.org/project/jain-digitizer/)
+[![Python versions](https://img.shields.io/pypi/pyversions/jain-digitizer.svg)](https://pypi.org/project/jain-digitizer/)
+[![Dependencies](https://img.shields.io/librariesio/github/yogendra/jain-digitizer)](https://libraries.io/github/yogendra/jain-digitizer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+![Jain Digitizer Showcase](docs/guide/hero.png)
+
 Jain Digitizer is a powerful, modern desktop application designed to streamline the digitization of philological and religious texts, specifically tailored for Hindi and Jain literature. Leveraging the power of Google's Gemini 2.0 Flash API, it provides high-fidelity OCR, translation, and rich text editing in a unified workspace.
+
+---
+
+### 📥 [Download Latest Build](https://github.com/yogendra/jain-digitizer/releases/latest)
 
 ---
 
@@ -24,19 +36,12 @@ sudo apt install -y libxcb-cursor0 libxcb-xinerama0 libxcb-icccm4 libxcb-image0 
 
 ### 3. Installation
 
-Clone the repository and set up the environment:
-
 ```bash
-# Option 1: Using Pip (Recommended for users)
+# Option 1: Using Pip (Recommended)
 pip install jain-digitizer
 
 # Option 2: Using Conda
 conda install -c your-channel jain-digitizer
-
-# Option 3: Local Development
-conda env create -f environment.yml
-conda activate jain-digitizer
-pip install -e .
 ```
 
 ### 4. Configuration
@@ -48,16 +53,8 @@ pip install -e .
 
 ### 5. Running the App
 
-If installed via pip/conda:
-
 ```bash
 jain-digitizer
-```
-
-For developer local run:
-
-```bash
-task run
 ```
 
 ---
@@ -66,14 +63,12 @@ task run
 
 The application is designed to be cross-platform and supports the following architectures:
 
-| Operating System | Architecture             | Status                                                 |
-| :--------------- | :----------------------- | :----------------------------------------------------- |
-| **macOS**        | Apple Silicon (M1/M2/M3) | ✅ Fully Supported                                     |
-| **macOS**        | Intel (x86_64)           | ✅ Fully Supported                                     |
-| **Windows**      | x86_64                   | ✅ Fully Supported                                     |
-| **Windows**      | ARM64 (aarch64)          | ⚠️ Experimental (Requires compatible Python/Qt builds) |
-| **Linux**        | x86_64                   | ✅ Fully Supported (Ubuntu, Fedora, Arch, etc.)        |
-| **Linux**        | ARM64 (aarch64)          | ⚠️ Experimental (Raspberry Pi 4/5, Jetson, etc.)       |
+| Operating System | Architecture             | Status                                           |
+| :--------------- | :----------------------- | :----------------------------------------------- |
+| **macOS**        | Apple Silicon (M1/M2/M3) | ✅ Fully Supported                               |
+| **Windows**      | x86_64                   | ✅ Fully Supported                               |
+| **Linux**        | x86_64                   | ✅ Fully Supported (Ubuntu, Fedora, Arch, etc.)  |
+| **Linux**        | ARM64 (aarch64)          | ⚠️ Experimental (Raspberry Pi 4/5, Jetson, etc.) |
 
 ---
 
@@ -92,27 +87,9 @@ The application is designed to be cross-platform and supports the following arch
 
 ---
 
-## 🛠️ Developer Contributions
+## 🛠️ Developers
 
-We welcome contributions! To get started:
-
-1. **Fork the Repository**
-2. **Setup Development Environment**:
-   ```bash
-   conda env create -f environment.yml
-   conda activate jain-digitizer
-   pip install -e .
-   ```
-3. **Run using Task**:
-   ```bash
-   task run
-   ```
-4. **Publish Updates**:
-   Once you've made changes and updated the version in `pyproject.toml` and `src/jain_digitizer/__init__.py`:
-   ```bash
-   task publish-pip
-   task publish-conda
-   ```
+If you want to contribute to this project or run it from source, please refer to the [Developer Guide](docs/DEVELOPMENT.md).
 
 ---
 
