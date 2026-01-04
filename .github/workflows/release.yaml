@@ -44,7 +44,7 @@ jobs:
           path: ~/conda_pkgs_dir
           key: ${{ runner.os }}-${{ runner.arch }}-conda-${{ hashFiles('environment.yml') }}
           restore-keys: |
-            ${{ runner.os }}-conda-
+            ${{ runner.os }}-${{ runner.arch }}-conda-
 
       - name: Setup Conda
         uses: conda-incubator/setup-miniconda@v3
