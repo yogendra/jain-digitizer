@@ -23,7 +23,10 @@ jobs:
           - os: windows-latest
             arch: arm64
             executable: jain-digitizer-arm64.exe
-
+          - os: macos-latest
+            arch: arm64
+            executable: jain-digitizer-arm64
+ 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
