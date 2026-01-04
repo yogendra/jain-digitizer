@@ -31,7 +31,7 @@ jobs:
             arch: amd64
             built: jain-digitizer-linux-amd64
             release: jain-digitizer-linux-amd64
-          - os: ubuntu-latest
+          - os: ubuntu-latest-arm64
             arch: arm64
             built: jain-digitizer-linux-arm64
             release: jain-digitizer-linux-arm64
@@ -67,20 +67,18 @@ jobs:
       - name: Build with PyInstaller
         shell: bash -l {0}
         run: |
+          echo "Building for ${{ matrix.os }} (${{ matrix.arch }}):: ${{ matrix.built }}"
           task build-exe
           
           if [[ "${{ matrix.os }}" == macos-* ]]; then
             echo "Zipping macOS bundle..."
             cd dist
             zip -r "${{ matrix.release }}" "${{ matrix.built }}"
-            echo "ASSET_PATH=dist/${{ matrix.release }}" >> $GITHUB_ENV
-          else
-            echo "ASSET_PATH=dist/${{ matrix.built }}" >> $GITHUB_ENV
           fi
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.ASSET_PATH }}
+          files: dist/${{ matrix.release }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
