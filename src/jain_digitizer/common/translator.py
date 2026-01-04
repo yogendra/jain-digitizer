@@ -2,7 +2,7 @@ import os
 import json
 from google import genai
 from google.genai import types
-from .logger_setup import logger
+from jain_digitizer.common.logger_setup import logger
 
 class Translator:
     """

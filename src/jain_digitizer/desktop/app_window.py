@@ -5,15 +5,15 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout,
 from PySide6.QtCore import Qt, QThread, Signal
 from PySide6.QtGui import QIcon
 
-from .rich_editor import HtmlRichEditor
-from .settings_dialog import SettingsDialog
-from .file_drop_zone import FileDropZone
+from jain_digitizer.desktop.rich_editor import HtmlRichEditor
+from jain_digitizer.desktop.settings_dialog import SettingsDialog
+from jain_digitizer.desktop.file_drop_zone import FileDropZone
 from jain_digitizer.common.constants import DEFAULT_PROMPT
 from jain_digitizer.common.translator import Translator
 from jain_digitizer.common.logger_setup import logger
-from .overlay import LoadingOverlay
+from jain_digitizer.desktop.overlay import LoadingOverlay
 try:
-    from .camera_dialog import CameraDialog
+    from jain_digitizer.desktop.camera_dialog import CameraDialog
     MULTIMEDIA_AVAILABLE = True
 except ImportError as e:
     logger.error(f"QtMultimedia not available: {e}")
