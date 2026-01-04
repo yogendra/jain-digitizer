@@ -78,10 +78,9 @@ class JainDigitizer(QMainWindow):
                 font-size: 40px;
                 border: 2px dashed #bbb;
                 border-radius: 10px;
-                background-color: #fcfcfc;
             }
             QPushButton:hover {
-                background-color: #f0f0f0;
+                background-color: rgba(52, 152, 219, 0.1);
                 border-color: #3498db;
             }
         """)
@@ -143,10 +142,9 @@ class JainDigitizer(QMainWindow):
         self.progress_bar.setVisible(False)
         self.progress_bar.setStyleSheet("""
             QProgressBar {
-                border: 1px solid #ddd;
+                border: 1px solid rgba(128, 128, 128, 0.5);
                 border-radius: 5px;
                 text-align: center;
-                background-color: #f0f0f0;
                 height: 10px;
             }
             QProgressBar::chunk {

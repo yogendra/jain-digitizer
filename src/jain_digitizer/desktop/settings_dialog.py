@@ -65,7 +65,6 @@ class SettingsDialog(QDialog):
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 padding: 10px;
-                background-color: #fdfdfd;
             }
         """)
         
@@ -78,7 +77,6 @@ class SettingsDialog(QDialog):
                 border: 1px solid #ccc;
                 border-radius: 4px;
                 padding: 10px;
-                background-color: #ffffff;
             }
         """)
         

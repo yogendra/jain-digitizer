@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QToolBar)
 from PySide6.QtGui import (QFont, QTextCursor, QAction, QTextCharFormat)
 from PySide6.QtCore import Qt, QMimeData, QEvent
+import platform
 from jain_digitizer.common.logger_setup import logger
 
 class HtmlTextEdit(QTextEdit):
@@ -86,7 +87,6 @@ class HtmlRichEditor(QWidget):
         self.toolbar = QToolBar()
         self.toolbar.setStyleSheet("""
             QToolBar {
-                background-color: #f8f9fa;
                 border-bottom: 1px solid #ddd;
                 padding: 2px;
             }
@@ -94,10 +94,8 @@ class HtmlRichEditor(QWidget):
                 padding: 4px;
                 margin: 1px;
                 border: 1px solid transparent;
-                color: #000;
             }
             QToolButton:hover {
-                background-color: #e9ecef;
                 border: 1px solid #dee2e6;
             }
         """)
@@ -111,27 +109,48 @@ class HtmlRichEditor(QWidget):
         self.editor.setTabStopDistance(20)
 
         # Toolbar actions
-        self.add_action("𝗕", "Bold", self.toggle_bold)
-        self.add_action("𝑰", "Italic", self.toggle_italic)
-        self.add_action("𝗨", "Underline", self.toggle_underline)
+        is_windows = platform.system() == "Windows"
+        
+        # We use standard text for B/I/U/H as they are most readable
+        self.add_action("B", "Bold", self.toggle_bold, bold=True)
+        self.add_action("I", "Italic", self.toggle_italic, italic=True)
+        self.add_action("U", "Underline", self.toggle_underline, underline=True)
         self.toolbar.addSeparator()
-        self.add_action("❶", "Header 1", lambda: self.set_font_size(24, True))
-        self.add_action("❷", "Header 2", lambda: self.set_font_size(20, True))
-        self.add_action("❸", "Header 3", lambda: self.set_font_size(16, True))
-        self.toolbar.addSeparator()
-        self.add_action("•", "Bullet List", self.insert_bullet_list)
-        self.add_action("🔢", "Numbered List", self.insert_numbered_list)
-        self.toolbar.addSeparator()
-        self.add_action("⮕", "Indent", self.indent)
-        self.add_action("⬅", "Outdent", self.outdent)
+        
+        self.add_action("H1", "Header 1", lambda: self.set_font_size(24, True))
+        self.add_action("H2", "Header 2", lambda: self.set_font_size(20, True))
+        self.add_action("H3", "Header 3", lambda: self.set_font_size(16, True))
         self.toolbar.addSeparator()
 
-        # Font size controls
-        self.add_action("A+", "Increase Font Size", self.zoomIn)
-        self.add_action("A-", "Decrease Font Size", self.zoomOut)
-        self.toolbar.addSeparator()
-        self.add_action("📋", "Copy All", self.copy_all)
-        self.add_action("⌫", "Normal Text (Clear Formatting)", self.clear_formatting)
+        # For these icons, use Webdings on Windows to avoid emoji/Unicode rendering issues
+        if is_windows:
+            self.add_action("•", "Bullet List", self.insert_bullet_list)
+            self.add_action("1.", "Numbered List", self.insert_numbered_list, bold=True)
+            self.toolbar.addSeparator()
+            # 8 is right arrow, 7 is left arrow in Webdings
+            self.add_action("8", "Indent", self.indent, font_family="Webdings")
+            self.add_action("7", "Outdent", self.outdent, font_family="Webdings")
+            self.toolbar.addSeparator()
+            # Font size controls
+            self.add_action("A+", "Increase Font Size", self.zoomIn)
+            self.add_action("A-", "Decrease Font Size", self.zoomOut)
+            self.toolbar.addSeparator()
+            # r is document icon in Webdings
+            self.add_action("r", "Copy All", self.copy_all, font_family="Webdings")
+            self.add_action("x", "Normal Text (Clear Formatting)", self.clear_formatting, bold=True)
+        else:
+            self.add_action("•", "Bullet List", self.insert_bullet_list)
+            self.add_action("1.", "Numbered List", self.insert_numbered_list, bold=True)
+            self.toolbar.addSeparator()
+            self.add_action("⮕", "Indent", self.indent)
+            self.add_action("⬅", "Outdent", self.outdent)
+            self.toolbar.addSeparator()
+            # Font size controls
+            self.add_action("A+", "Increase Font Size", self.zoomIn)
+            self.add_action("A-", "Decrease Font Size", self.zoomOut)
+            self.toolbar.addSeparator()
+            self.add_action("📋", "Copy All", self.copy_all)
+            self.add_action("⌫", "Normal Text (Clear Formatting)", self.clear_formatting)
         
         self.layout.addWidget(self.toolbar)
         self.layout.addWidget(self.editor)
@@ -171,7 +190,7 @@ class HtmlRichEditor(QWidget):
         cursor.endEditBlock()
         self.editor.setTextCursor(cursor)
 
-    def add_action(self, text, tooltip, callback):
+    def add_action(self, text, tooltip, callback, font_family=None, bold=False, italic=False, underline=False):
         action = QAction(text, self)
         action.setToolTip(tooltip)
         action.triggered.connect(callback)
@@ -179,9 +198,17 @@ class HtmlRichEditor(QWidget):
         
         button = self.toolbar.widgetForAction(action)
         if button:
-            button.setFixedWidth(30)
+            button.setFixedWidth(35)
             font = button.font()
-            font.setPointSize(14)
+            if font_family:
+                font.setFamily(font_family)
+                font.setPointSize(11)
+            else:
+                font.setPointSize(10)
+            
+            font.setBold(bold)
+            font.setItalic(italic)
+            font.setUnderline(underline)
             button.setFont(font)
 
     def toggle_bold(self):
