@@ -26,7 +26,8 @@ test = [
     "pytest-qt",
 ]
 dev = [
-    "pyinstaller",
+    "pyinstaller>=6.0.0",
+    "pyinstaller-hooks-contrib",
     "build",
     "twine",
     "pytest",

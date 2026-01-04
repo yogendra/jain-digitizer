@@ -6,7 +6,8 @@ dependencies:
   - python=3.10
   - pip
   - rich
-  - pyinstaller
+  - pyinstaller>=6.0.0
+  - pyinstaller-hooks-contrib
   - pip:
       - google-genai
       - streamlit
