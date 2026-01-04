@@ -17,18 +17,19 @@ jobs:
         include:
           - os: windows-latest
             arch: amd64
-            executable: jain-digitizer.exe
-          - os: ubuntu-latest
-            arch: amd64
-            executable: jain-digitizer
-          # GitHub Actions recently added windows-arm64 runners for some accounts
-          # If unavailable, you can build on windows-latest using cross-compile flags
-          - os: windows-latest
-            arch: arm64
-            executable: jain-digitizer-arm64.exe
+            executable: jain-digitizer-windows-amd64.exe
           - os: macos-latest
             arch: arm64
-            executable: jain-digitizer-arm64
+            executable: jain-digitizer-macos-arm64
+          - os: ubuntu-latest
+            arch: arm64
+            executable: jain-digitizer-linux-arm64
+          - os: ubuntu-latest
+            arch: amd64
+            executable: jain-digitizer-linux-amd64
+          - os: windows-latest
+            arch: arm64
+            executable: jain-digitizer-windows-arm64.exe
  
     steps:
       - name: Checkout Code
