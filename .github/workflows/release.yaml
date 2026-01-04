@@ -40,10 +40,14 @@ jobs:
 
       - name: Cache Conda packages
         uses: actions/cache@v4
+        env:
+          # Increase this value to reset cache if environment.yml has not changed
+          CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-${{ runner.arch }}-conda-${{ hashFiles('environment.yml') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('environment.yml') }}
           restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-conda-${{ env.CACHE_NUMBER }}-
             ${{ runner.os }}-${{ runner.arch }}-conda-
 
       - name: Setup Conda
@@ -52,6 +56,9 @@ jobs:
           activate-environment: jain-digitizer
           environment-file: environment.yml
           auto-activate-base: false
+          use-mamba: true
+          pkgs-dirs: ~/conda_pkgs_dir
+          use-only-tar-bz2: true
 
       - name: Build with PyInstaller
         shell: bash -l {0}
@@ -62,6 +69,6 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
-          files: jain-digitizer/jain-digitizer/dist/${{ matrix.executable }}
+          files: dist/${{ matrix.executable }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
