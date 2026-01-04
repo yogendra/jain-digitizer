@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QLineEdit,
                              QLabel, QPushButton, QSizePolicy, QHBoxLayout, QWidget, QPlainTextEdit, QSplitter, QTextEdit)
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
+from jain_digitizer.version import __version__, __commit__
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None, api_key="", prompt=""):
@@ -95,6 +96,16 @@ class SettingsDialog(QDialog):
         self.save_btn.setStyleSheet("background-color: #3498db; color: white; font-weight: bold;")
         self.save_btn.clicked.connect(self.accept)
         main_layout.addWidget(self.save_btn)
+        
+        # Version Information
+        version_text = f"Version: {__version__}"
+        if __commit__ and __commit__ != "unknown":
+            version_text += f" ({__commit__})"
+            
+        version_label = QLabel(version_text)
+        version_label.setAlignment(Qt.AlignCenter)
+        version_label.setStyleSheet("color: #888; font-size: 11px; margin-top: 10px; font-style: italic;")
+        main_layout.addWidget(version_label)
 
     def toggle_api_key_visibility(self):
         if self.reveal_btn.isChecked():

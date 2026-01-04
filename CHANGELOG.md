@@ -2,9 +2,22 @@
 
 All notable changes to the Jain Digitizer project will be documented in this file.
 
-## [Unreleased] - 2025-12-22
+## [Unreleased] - 2026-01-04
+
+### Changed
+
+- **Taskfile Simplification**:
+  - Replaced Python-based `build-prep` with a simplified multi-line Bash script using `sed`.
+  - Removed manual `publish-pip` and `publish-conda` tasks as publishing is currently deferred.
+  - Updated `trigger-release` to include a safety check for uncommitted changes.
+- **Documentation Overhaul**:
+  - Updated `README.md` and `DEVELOPMENT.md` to reflect the pivot from package managers (Pip/Conda) to executable-based distribution.
+  - Simplified developer setup and testing instructions using `task` commands.
+
+## [0.21] - 2025-12-22
 
 ### Added
+
 - **Centralized Logging System**:
   - Created `src/logger_setup.py` for uniform logging across the app.
   - Integrated `rich` for colorized terminal output with timestamps and line numbers.
@@ -19,8 +32,9 @@ All notable changes to the Jain Digitizer project will be documented in this fil
   - The new `Translator` library now sends multiple files in a single Gemini API call for better speed and context maintenance.
 
 ### Changed
+
 - **Codebase Refactoring**:
-  - Extracted UI components into dedicated files: `app_window.py`, `settings_dialog.py`, `file_drop_zone.py`. 
+  - Extracted UI components into dedicated files: `app_window.py`, `settings_dialog.py`, `file_drop_zone.py`.
   - Decoupled logic: Created `translator.py` as a standalone, non-UI library for Gemini API interactions.
   - Minimal `main.py` now serves as the clean entry point.
 - **UI Redesign**:
@@ -34,6 +48,7 @@ All notable changes to the Jain Digitizer project will be documented in this fil
   - Updated `environment.yml` with the `rich` library dependency.
 
 ### Fixed
+
 - Resolved `AttributeError` when accessing `self.editor` during toolbar initialization.
 - Fixed `NameError` in the gesture event handler.
 - Corrected trackpad zoom directionality to match natural Mac behavior.

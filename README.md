@@ -1,8 +1,6 @@
 # Jain Digitizer 📚✨
 
 [![Build and Release](https://github.com/yogendra/jain-digitizer/actions/workflows/release.yaml/badge.svg)](https://github.com/yogendra/jain-digitizer/actions/workflows/release.yaml)
-[![PyPI version](https://img.shields.io/pypi/v/jain-digitizer.svg)](https://pypi.org/project/jain-digitizer/)
-[![Python versions](https://img.shields.io/pypi/pyversions/jain-digitizer.svg)](https://pypi.org/project/jain-digitizer/)
 [![Dependencies](https://img.shields.io/librariesio/github/yogendra/jain-digitizer)](https://libraries.io/github/yogendra/jain-digitizer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -36,13 +34,13 @@ sudo apt install -y libxcb-cursor0 libxcb-xinerama0 libxcb-icccm4 libxcb-image0 
 
 ### 3. Installation
 
-```bash
-# Option 1: Using Pip (Recommended)
-pip install jain-digitizer
+The application is currently distributed as standalone executables for various platforms.
 
-# Option 2: Using Conda
-conda install -c your-channel jain-digitizer
-```
+1.  **Download**: Get the latest version from the [Releases](https://github.com/yogendra/jain-digitizer/releases/latest) page.
+2.  **Extract**: Unzip the package.
+3.  **Run**: Execute the `jain-digitizer` binary.
+
+For developers who want to run from source, see the [Developer Guide](docs/DEVELOPMENT.md).
 
 ### 4. Configuration
 
@@ -53,8 +51,16 @@ conda install -c your-channel jain-digitizer
 
 ### 5. Running the App
 
+If you downloaded the binary:
+
 ```bash
-jain-digitizer
+./jain-digitizer
+```
+
+If you are running from source:
+
+```bash
+task run
 ```
 
 ---
@@ -83,7 +89,6 @@ The application is designed to be cross-platform and supports the following arch
   - Paste-as-Markdown support.
   - Native Trackpad **Pinch-to-Zoom** and `Ctrl+Scroll` support.
 - **Centralized Logging**: Beautiful, colorized terminal output and persistent file logs for easy debugging.
-- **Easy Distribution**: Packaged for Pip and Conda for seamless cross-platform usage.
 
 ---
 

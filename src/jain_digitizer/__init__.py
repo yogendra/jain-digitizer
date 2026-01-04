@@ -1,3 +1,1 @@
-from jain_digitizer.desktop.main import main
-
-__version__ = "0.1.0"
+from jain_digitizer.version import __version__, __commit__

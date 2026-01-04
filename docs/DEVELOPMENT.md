@@ -19,7 +19,7 @@ git clone https://github.com/yogendra/jain-digitizer.git
 cd jain-digitizer
 conda env create -f environment.yml
 conda activate jain-digitizer
-pip install -e .
+task setup-dev
 ```
 
 ### 3. Running for Development
@@ -30,17 +30,22 @@ Use `task` to run the application in development mode:
 task run
 ```
 
-## 🚀 Publishing Updates
+## 🚀 Releasing a New Version
 
-Once you've made changes and updated the version in `pyproject.toml` and `src/jain_digitizer/__init__.py`:
+The release process is automated via GitHub Actions. To trigger a new release:
 
-```bash
-# To publish to Pip
-task publish-pip
+1.  **Commit Your Changes**:
+    Ensure all your changes are committed to the repository. The release task will fail if there are uncommitted changes.
 
-# To publish to Conda
-task publish-conda
-```
+2.  **Run the trigger-release task**:
+    This will calculate the next version based on the last tag and push a new tag to GitHub.
+
+    ```bash
+    task trigger-release
+    ```
+
+3.  **Wait for the Build**:
+    GitHub Actions will see the new tag and start building the executables for Windows, Mac, and Linux. The version information will be automatically injected into the application and `pyproject.toml` during the build process.
 
 ## 🛠️ Contributing
 
@@ -48,10 +53,9 @@ We welcome contributions! To get started:
 
 1. **Fork the Repository**
 2. **Implement your changes**
-3. **Run tests** (Ensure you have the `test` dependencies installed):
+3. **Run tests**:
    ```bash
-   pip install -e ".[test]"
-   pytest
+   task test
    ```
 4. **Submit a Pull Request**
 

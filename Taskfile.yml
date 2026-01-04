@@ -38,8 +38,23 @@ tasks:
     cmds:
       - export PYTHONPATH=$PYTHONPATH:$(pwd)/src && pytest test/
 
+  build-prep:
+    desc: Update version.py and pyproject.toml with latest git info (tag and commit)
+    cmds:
+      - |
+        TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        VERSION=${TAG#v}
+        COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+        
+        [ -f pyproject.toml ] && sed -i '' "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+        
+        VERSION_FILE="src/jain_digitizer/version.py"
+        echo "__version__ = \"$VERSION\"\n__commit__ = \"$COMMIT\"" > "$VERSION_FILE"
+        echo "Injecting version $VERSION and commit $COMMIT"
+
   build-exe:
     desc: Build the executable locally
+    deps: [build-prep]
     cmds:
       - |        
         pyinstaller \
@@ -55,34 +70,29 @@ tasks:
           --add-data src/jain_digitizer/common/prompt-md.md:jain_digitizer/common \
           src/jain_digitizer/desktop/main.py
 
-  commit:
-    desc: Stage all changes and commit with a message
+  trigger-release:
+    desc: Auto-increment version, tag, and push
+    summary: |
+      This task:
+      1. Checks for uncommitted changes
+      2. Gets the latest tag and increments the patch version
+      3. Creates a new tag
+      4. Pushes the branch and the new tag to trigger GitHub Actions
+    preconditions:
+      - sh: git diff-index --quiet HEAD --
+        msg: "[ERROR] Uncommitted changes found. Please commit or stash them first."
     cmds:
-      - git add .
-      - git commit -m "{{.MSG}}"
-    requires:
-      vars: [MSG]
-
-  publish-pip:
-    desc: Build and upload to PyPI
-    cmds:
-      - python -m build
-      - twine upload dist/*
-
-  publish-conda:
-    desc: Build and upload to Anaconda
-    cmds:
-      - conda build conda/
-      - anaconda upload $(conda build conda/ --output)
-
+      - |
+        LATEST=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        NEXT_VERSION=$({{.PYTHON}} -c "v = '$LATEST'.lstrip('v').split('.'); v[-1] = str(int(v[-1]) + 1); print('.'.join(v))")
+        echo "Calculated next version: v$NEXT_VERSION"
+        git tag -a v$NEXT_VERSION -m "Release v$NEXT_VERSION"
+        git push origin $(git branch --show-current)
+        git push origin v$NEXT_VERSION
   release:
-    desc: Create and push a new version tag
+    desc: Alias for trigger-release
     cmds:
-      - git tag v{{.VER}}
-      - git push origin v{{.VER}}
-      - echo "Tag v{{.VER}} pushed. GitHub Actions will now start the build."
-    requires:
-      vars: [VER]
+      - task: trigger-release
 
   clean:
     desc: Clean build artifacts
