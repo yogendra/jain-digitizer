@@ -17,19 +17,20 @@ jobs:
         include:
           - os: windows-latest
             arch: amd64
-            executable: jain-digitizer-windows-amd64.exe
+            built: jain-digitizer-windows-amd64.exe
+            release: jain-digitizer-windows-amd64.exe
           - os: macos-latest
             arch: arm64
-            executable: jain-digitizer-darwin-arm64.app
-          - os: ubuntu-latest
-            arch: arm64
-            executable: jain-digitizer-linux-arm64
+            built: jain-digitizer-darwin-arm64.app
+            release: jain-digitizer-darwin-arm64.app.zip
+          - os: macos-13
+            arch: amd64
+            built: jain-digitizer-darwin-amd64.app
+            release: jain-digitizer-darwin-amd64.app.zip
           - os: ubuntu-latest
             arch: amd64
-            executable: jain-digitizer-linux-amd64
-          - os: windows-latest
-            arch: arm64
-            executable: jain-digitizer-windows-arm64.exe
+            built: jain-digitizer-linux-amd64
+            release: jain-digitizer-linux-amd64
  
     steps:
       - name: Checkout Code
@@ -41,7 +42,6 @@ jobs:
       - name: Cache Conda packages
         uses: actions/cache@v4
         env:
-          # Increase this value to reset cache if environment.yml has not changed
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
@@ -63,12 +63,20 @@ jobs:
       - name: Build with PyInstaller
         shell: bash -l {0}
         run: |
-          echo Building ${{ matrix.executable }}
           task build-exe
+          
+          if [[ "${{ matrix.os }}" == macos-* ]]; then
+            echo "Zipping macOS bundle..."
+            cd dist
+            zip -r "${{ matrix.release }}" "${{ matrix.built }}"
+            echo "ASSET_PATH=dist/${{ matrix.release }}" >> $GITHUB_ENV
+          else
+            echo "ASSET_PATH=dist/${{ matrix.built }}" >> $GITHUB_ENV
+          fi
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/${{ matrix.executable }}
+          files: ${{ env.ASSET_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
