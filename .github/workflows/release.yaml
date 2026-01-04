@@ -41,7 +41,7 @@ jobs:
       - name: Build with PyInstaller
         shell: bash -l {0}
         run: |
-          pyinstaller --onefile --windowed --name ${{ matrix.executable }} src/main.py
+          pyinstaller --onefile --windowed --name ${{ matrix.executable }}  --icon=src/jain_digitizer/desktop/icon.png src/jain_digitizer/desktop/main.py
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v1
