@@ -46,10 +46,12 @@ tasks:
         VERSION=${TAG#v}
         COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
         
-        [ -f pyproject.toml ] && sed -i '' "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+        if [ -f pyproject.toml ]; then
+            sed "s/version = \".*\"/version = \"$VERSION\"/" pyproject.toml > pyproject.toml.tmp && mv pyproject.toml.tmp pyproject.toml
+        fi
         
         VERSION_FILE="src/jain_digitizer/version.py"
-        echo "__version__ = \"$VERSION\"\n__commit__ = \"$COMMIT\"" > "$VERSION_FILE"
+        printf "__version__ = \"%s\"\n__commit__ = \"%s\"\n" "$VERSION" "$COMMIT" > "$VERSION_FILE"
         echo "Injecting version $VERSION and commit $COMMIT"
 
   build-exe:

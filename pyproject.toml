@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jain-digitizer"
-version = "0.21"
+version = "0.22"
 description = "High-fidelity OCR and translation tool for Jain and Hindi literature using Gemini 2.0"
 readme = "README.md"
 requires-python = ">=3.10"
