@@ -23,14 +23,14 @@ jobs:
             arch: arm64
             built: jain-digitizer-darwin-arm64.app
             release: jain-digitizer-darwin-arm64.app.zip
-          - os: macos-13
-            arch: amd64
-            built: jain-digitizer-darwin-amd64.app
-            release: jain-digitizer-darwin-amd64.app.zip
           - os: ubuntu-latest
             arch: amd64
             built: jain-digitizer-linux-amd64
             release: jain-digitizer-linux-amd64
+          - os: ubuntu-latest
+            arch: arm64
+            built: jain-digitizer-linux-arm64
+            release: jain-digitizer-linux-arm64
  
     steps:
       - name: Checkout Code
