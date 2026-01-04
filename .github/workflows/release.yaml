@@ -19,6 +19,10 @@ jobs:
             arch: amd64
             built: jain-digitizer-windows-amd64.exe
             release: jain-digitizer-windows-amd64.exe
+          - os: windows-latest
+            arch: arm64
+            built: jain-digitizer-windows-arm64.exe
+            release: jain-digitizer-windows-arm64.exe
           - os: macos-latest
             arch: arm64
             built: jain-digitizer-darwin-arm64.app
