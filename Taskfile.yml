@@ -6,6 +6,11 @@ vars:
   CONDA_ENV: jain-digitizer
 
 tasks:
+  system-info:
+    desc: Display system information (OS and Architecture)
+    cmds:
+      - echo "Operating System  {{OS}}"
+      - echo "CPU Architecture {{ARCH}}"
   setup:
     desc: Create the conda environment
     cmds:
@@ -34,9 +39,21 @@ tasks:
       - export PYTHONPATH=$PYTHONPATH:$(pwd)/src && pytest test/
 
   build-exe:
-    desc: Build the standalone executable locally
+    desc: Build the executable locally
     cmds:
-      - pyinstaller --onefile --windowed --icon=src/jain_digitizer/desktop/icon.png --name {{.APP_NAME}} src/jain_digitizer/desktop/main.py
+      - |        
+        pyinstaller \
+          --noconfirm \
+          --onefile \
+          --windowed \
+          --paths src \
+          --icon=src/jain_digitizer/desktop/icon.png \
+          --name {{.APP_NAME}}-{{OS}}-{{ARCH}} \
+          --osx-bundle-identifier  me.yogendra.jain-digitizer \
+          --add-data src/jain_digitizer/desktop/icon.png:jain_digitizer/desktop \
+          --add-data src/jain_digitizer/common/prompt-html.md:jain_digitizer/common \
+          --add-data src/jain_digitizer/common/prompt-md.md:jain_digitizer/common \
+          src/jain_digitizer/desktop/main.py
 
   commit:
     desc: Stage all changes and commit with a message

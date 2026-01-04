@@ -37,5 +37,5 @@ dev = [
 jain-digitizer = "jain_digitizer.desktop.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jain_digitizer"]
+packages = ["src/jain_digitizer/desktop"]
 rewrite-path = "src/"

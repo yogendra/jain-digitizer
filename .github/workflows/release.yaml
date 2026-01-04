@@ -20,7 +20,7 @@ jobs:
             executable: jain-digitizer-windows-amd64.exe
           - os: macos-latest
             arch: arm64
-            executable: jain-digitizer-macos-arm64
+            executable: Jain Digitizer.app
           - os: ubuntu-latest
             arch: arm64
             executable: jain-digitizer-linux-arm64
@@ -34,6 +34,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Install Task
+        uses: go-task/setup-task@v3
 
       - name: Cache Conda packages
         uses: actions/cache@v4
