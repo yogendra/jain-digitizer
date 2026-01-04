@@ -94,6 +94,7 @@ class HtmlRichEditor(QWidget):
                 padding: 4px;
                 margin: 1px;
                 border: 1px solid transparent;
+                color: #000;
             }
             QToolButton:hover {
                 background-color: #e9ecef;
